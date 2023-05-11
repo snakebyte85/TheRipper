@@ -1,0 +1,164 @@
+Class SpecialEffect : Actor {
+
+    Default {
+        //$Category SpecialEffects
+        Radius 0;
+        Height 0;
+        +NOGRAVITY;
+        +NOBLOCKMAP;
+        +NOTELEPORT;
+    }
+
+}
+
+Class DestructibleWallSpecialEffect : SpecialEffect {
+
+    Default{ 
+        //$Title Destructible Wall Special Effect
+        //$Sprite DEWAA0
+    }
+
+    private double oldFloorHeightDiff;
+
+    override void PostBeginPlay() {
+            
+        SecPlane floorPlane = CurSector.floorplane;
+        SecPlane ceilingPlane = CurSector.ceilingplane;
+        
+        double heightFloor = floorPlane.ZAtPoint((CurSector.CenterSpot.x, CurSector.CenterSpot.y));
+        double heightCeiling = ceilingPlane.ZAtPoint((CurSector.CenterSpot.x, CurSector.CenterSpot.y));
+        
+        double slopeOffset = 0;
+        if (floorPlane.isSlope() || ceilingPlane.isSlope()) {
+            slopeOffset = 500;
+        }   
+        
+        oldFloorHeightDiff = (heightCeiling - heightFloor) + slopeOffset;
+        floorPlane.ChangeHeight(oldFloorHeightDiff);
+               
+        
+    }
+    
+    override void Activate(Actor activator) {
+    
+        SecPlane floorPlane = CurSector.floorplane;
+        
+        floorPlane.ChangeHeight(-oldFloorHeightDiff);
+    }
+}
+
+Class ExplosionSpecialEffect : SpecialEffect {
+
+    Default {
+        //$Title Explosion Special Effect
+        //$Sprite EXPLA0
+        //$Arg0 Damage
+        //$Arg0Default 30
+        //$Arg1 Radius
+        //$Arg1Default 128
+        //$Arg2 Delay
+        //$Arg2Default 0
+    }
+    
+    private bool activated;
+    int ticsTime;
+     
+    override void Activate(Actor activator) {    
+        activated = true;
+        ticsTime = level.time + args[2];
+    }
+    
+    override void Tick() {
+        if(activated) {
+            if(level.time >= ticsTime) {
+                bool b;
+                Actor e;
+                [b,e] = A_SpawnItemEx("Explosion");
+                let exp = Explosion(e);
+                exp.damage=args[0];
+                exp.radius=args[1];
+                activated=false;
+            }
+        }
+    }
+}
+
+Class MultiActivationSpecialEffect : SpecialEffect {
+
+    Default {
+        //$Title Multi Activation Special Effect
+        //$Sprite MULTA0
+        //$Arg0 Thing 1 to activate
+        //$Arg1 Thing 2 to activate
+        //$Arg2 Thing 3 to activate
+        //$Arg3 Thing 4 to activate
+        //$Arg4 Thing 5 to activate
+    }
+    
+    override void Activate(Actor activator) {    
+         for (int i = 0; i < args.Size(); i++)  {
+            if (args[i] != 0) {
+                Utils.ActivateThings(args[i], self);
+            }
+        }
+    }
+}
+
+Class CrackSpecialEffect : SpecialEffect {
+
+    Default {
+        //$Title Crack Special Effect
+        //$Arg0 Thing to activate
+        Radius 10;
+        Height 32;
+        +WALLSPRITE;
+        +SHOOTABLE;
+        -NOBLOCKMAP;
+        +NOBLOOD;
+        +DONTTHRUST;
+        +NOTAUTOAIMED;
+        health 10;
+        DamageFactor "None", 0;
+        DamageFactor "Explosion", 1;        
+    } 
+    
+    States{
+        Spawn:
+            CRK1 A 1;
+            loop;
+        Death:
+            TNT1 A 1;
+            stop;
+        }
+        
+    override void Die(Actor source, Actor inflictor, int dmgflags, Name MeansOfDeath) {        
+        Utils.ActivateThings(args[0], self);
+        Destroy();
+    }
+}
+
+Class Crack2SpecialEffect : CrackSpecialEffect {
+
+    Default {
+        //$Title Crack2 Special Effect          
+    } 
+    
+    States{
+        Spawn:
+            CRK2 A 1;
+            loop;
+        }
+}
+
+Class Crack3SpecialEffect : CrackSpecialEffect {
+
+    Default {
+        //$Title Crack3 Special Effect          
+    } 
+    
+    States{
+        Spawn:
+            CRK3 A 1;
+            loop;
+        }
+}

@@ -1,0 +1,150 @@
+GameInfo
+{
+	TitlePage = "graphics/titlepic.png"
+	CursorPic = "graphics/m_cursor.png"
+	PauseSign = "graphics/m_pause.png"
+	BorderFlat = "graphics/border_flat.png"
+	MenuBackButton = "graphics/m_back.png"
+	MenuFontColor_Title = "White"
+	MenuFontColor_Label = "Default"
+	MenuFontColor_Value = "Gray"
+	MenuFontColor_Action = "Gray"
+	MenuFontColor_Header = "White"
+	MenuFontColor_Highlight = "White"
+	MenuFontColor_Selection = "Gray"
+	FullscreenAutoAspect = 3
+	DimColor = "0b 0b 0b"
+	DimAmount = 0.8
+	PlayerClasses = "MyPlayer"
+	StatusbarClass = "MyHUD"    
+    
+    AddEventHandlers = "RadiusDebugHandler"
+    
+    SkyFlatName = "STARSKY1"
+}
+
+//-------------------------------------------------------------------------------------------
+//
+//
+//
+//-------------------------------------------------------------------------------------------
+
+ClearEpisodes
+Episode map01
+{
+	Name = "$TXT_MAP01_NAME"
+}
+
+//-------------------------------------------------------------------------------------------
+//
+//
+//
+//-------------------------------------------------------------------------------------------
+
+Skill baby
+{
+	AutoUseHealth
+	AmmoFactor = 2
+	DamageFactor = 0.5
+	EasyBossBrain
+	SpawnFilter = Baby
+	Name = "$SKILL_BABY"
+}
+
+Skill easy
+{
+	EasyBossBrain
+	SpawnFilter = Easy
+	Name = "$SKILL_EASY"
+}
+
+Skill normal
+{
+	SpawnFilter = Normal
+	Name = "$SKILL_NORMAL"
+	DefaultSkill
+}
+
+Skill hard
+{
+	SpawnFilter = Hard
+	Name = "$SKILL_HARD"
+}
+
+Skill nightmare
+{
+	AmmoFactor = 2
+	FastMonsters
+	DisableCheats
+	RespawnTime = 12
+	SpawnFilter = Nightmare
+	Name = "$SKILL_NIGHTMARE"
+	MustConfirm
+}
+
+//-------------------------------------------------------------------------------------------
+//
+//
+//
+//-------------------------------------------------------------------------------------------
+
+Map "MAP01" "$TXT_MAP01"
+{
+	LightMode = 3
+	Sky1 = "textures/sky/STARSKY1.png"
+}
+
+Map "TEST" "TEST"
+{
+	LightMode = 3
+	Sky1 = "textures/sky/STARSKY1.png"
+}
+
+
+//--------------------------
+
+DoomEdNums
+{
+    10000 = Machete
+    10001 = PlasmaBolter
+    10002 = Bearkiller
+    10003 = SMGWeapon
+    10004 = GrenadeLauncher
+    10005 = PipebombBox
+    10006 = IronXBow
+    10007 = SawThrower
+    
+    10010 = PipebombAmmo
+    
+    12001 = Chair
+
+    20001 = CockroachSoldier
+    20002 = CockroachCaptain
+    20003 = VagMouth
+    
+    20101 = PedestrianFod1
+    20102 = PedestrianFod2
+    20103 = PedestrianFod3
+    20104 = PedestrianFod4
+    20105 = PedestrianFod5
+    20106 = PedestrianFod6
+    20107 = PedestrianFod7
+    20108 = PedestrianFod1f
+    20109 = PedestrianFod1f2
+    20110 = PedestrianFod1f3
+    20111 = PedestrianFod1f4
+    20112 = PedestrianFod1f5
+    20113 = PedestrianFod1f6
+    20114 = PedestrianDoc1
+    20115 = PedestrianDoc2f
+    
+    
+    30001 = DestructibleWallSpecialEffect
+    30002 = ExplosionSpecialEffect
+    30003 = CrackSpecialEffect
+    30004 = Crack2SpecialEffect
+    30005 = Crack3SpecialEffect
+    30006 = MultiActivationSpecialEffect
+    
+    
+}

@@ -1,0 +1,189 @@
+Class Cockroach : MyMonster {
+
+    protected void A_MyChase()
+    {
+        if (!target){
+            return;
+        }
+        
+        if (DoINeedToJump()) {
+            SetStateLabel("JumpingUp");
+        }
+        else {
+            A_Chase();
+        }
+    }
+
+
+  protected void plasma() {
+    A_SpawnProjectile("PlasmaBolterShot", 40, -5, frandom(-5,5), CMF_OFFSETPITCH, frandom(-2,2));
+  }
+  
+  protected void shotgun() {
+    A_StartSound("KFFIRE");
+    A_CustomBulletAttack(20, 5, 5, 5, "BulletPuff", 0, CBAF_NORANDOM);
+  }
+  
+  protected Int plasmaMaxShots;
+  protected Int plasmaMinShots;
+  private Int plasmaCurrentShots;
+  property PlasmaMaxShots: plasmaMaxShots;
+  property PlasmaMinShots: plasmaMinShots;
+
+  Default
+  {
+    Radius 20;
+    Height 60;
+    mass 90;
+    MONSTER;
+    +FLOORCLIP;
+    Scale 0.8;
+    SeeSound "enemies/cockroachsee";
+    ActiveSound "enemies/cockroachgrunt";
+    PainSound "enemies/cockroachpain";
+    DeathSound "enemies/cockroachdeath";
+    +AVOIDMELEE;
+    +MISSILEMORE;
+    MaxDropOffHeight 32;
+    Cockroach.PlasmaMinShots 1;
+    Cockroach.PlasmaMaxShots 2;
+  }
+  
+  States
+  {
+  Spawn:
+    CRSO ABCD 10 A_Look();
+    loop;
+  See:
+    CRSO ABCD 4 A_MyChase();
+    loop;
+  Missile:
+    goto Plasma;
+  Plasma:
+    CRSF ABCD 4 A_FaceTarget();
+    CRSF E 8 {
+        plasmaCurrentShots = 0;
+    }   
+  PlasmaShot:
+    CRSF F 4 Bright plasma();
+    CRSF E 8;
+    TNT1 A 0 {
+        plasmaCurrentShots++;
+        if (plasmaCurrentShots < PlasmaMinShots) {
+            return A_Jump(255, "PlasmaShot");
+        }
+        else if (plasmaCurrentShots < PlasmaMaxShots) {
+            return A_Jump(128,"PlasmaShot");
+        } else {
+            return ResolveState(Null);
+        }
+    }
+    CRSF DCBA 4;
+    goto See;
+  JumpingUp:
+    CRSO A 1;
+    TNT1 A 0 A_Jumping();
+    loop;
+  JumpingDown:
+    CRSO C 1;
+    TNT1 A 0 A_Jumping();
+    loop;
+  Pain:
+    CRSD A 8 A_Pain();
+    goto See;
+  Death:
+    CRSD ABC 8 {
+        A_Scream();
+        A_NoBlocking();
+        }
+    CRSD D -1;
+    stop;
+  }
+}
+
+Class CockroachSoldier : Cockroach
+{
+  Default
+  {
+    //$Title Cockroach Soldier
+    obituary "%o was killed by a disgusting coackroach soldier";
+    health 100;
+    speed 10;
+    painchance 200;    
+  }
+
+}
+
+Class CockroachCaptain : Cockroach
+{
+  Default
+  {
+    //$Title Cockroach Captain
+    obituary "%o was killed by a disgusting coackroach captain";
+    health 150;
+    speed 15;
+    painchance 150;
+    Translation "195:213=5:24";
+    +MISSILEEVENMORE;
+    Cockroach.PlasmaMinShots 2;
+    Cockroach.PlasmaMaxShots 3;
+  }
+  
+  States
+  {
+  Missile:
+    TNT1 A 0 A_JumpIfCloser(256, "Shotgun");
+    goto Plasma;
+  Shotgun:
+    CRSA A 4 A_FaceTarget();
+    CRSA B 8;
+    CRSA C 4 Bright shotgun();
+    CRSA BA 4;
+    goto See;
+  }
+}
+
+Class VagMouth : MyMonster {
+
+    Default {
+        //$Title Vag Mouth
+        Scale 0.5;
+        Radius 20;
+        Height 60;
+        mass 90;
+        speed 20;
+        MONSTER;
+        +FLOORCLIP;
+        SeeSound "";
+        ActiveSound "";
+        PainSound "";
+        DeathSound "";
+        MaxDropOffHeight 32;
+        health 300;
+        painchance 150;
+     }
+     
+     States
+  {
+  Spawn:
+    VAGM A 1 A_Look();
+    loop;
+  See:
+    VAGM BCDE 4 A_Chase();
+    loop;
+  Melee:
+    VAGA A 4;
+    VAGA B 4 A_CustomMeleeAttack(10);
+    goto see;
+  Pain:
+    VAGP A 8 A_Pain();
+    goto See;
+  Death:
+    VAGD ABCD 8 {
+        A_Scream();
+        A_NoBlocking();
+        }
+    VAGD E -1;
+    stop;
+  }
+}

@@ -1,0 +1,284 @@
+Class CustomBloodSplatter : BloodSplatter replaces BloodSplatter
+{
+    Default
+  {
+      Radius 10;
+      Height 4;
+      +NOBLOCKMAP;
+      +MISSILE;
+      +DROPOFF;
+      +NOTELEPORT;
+      +CANNOTPUSH;
+      +ALLOWPARTICLES;
+      Mass 5;
+      } 
+  States
+  {
+  Spawn:
+    BLOD ABCDE 8;
+    stop;
+  }
+  
+}
+
+Class CustomBlood : Blood replaces Blood
+{
+  Default {
+      Mass 5;
+      +NOBLOCKMAP;
+      +NOTELEPORT;
+      +ALLOWPARTICLES;
+  } 
+  States
+  {
+  Spawn:
+    SPRY AB 4;
+    SPRY C 4 A_SpawnItemEx("BloodSplat", 0, 0 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
+    SPRY DEF 4;
+    stop;
+  }
+
+}
+
+Class CustomBloodSplash : Actor
+{
+  Default {
+      +NOBLOCKMAP;
+      +NOTELEPORT;
+      +CANNOTPUSH;
+      +NOGRAVITY;
+      Scale 0.2;
+  } 
+  States
+  {
+  Spawn:
+    BSPL A 4;
+    BSPL B 4 A_SpawnItemEx("BloodSplat", 0, 0 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
+    BSPL CDEFG 4;
+    stop;
+  }
+
+}
+
+Class BloodSplat : Actor
+{
+  Default {
+      +NOBLOCKMAP;
+      +NOTELEPORT;
+      +CANNOTPUSH;
+      +FLATSPRITE;
+      +NOGRAVITY;
+      Scale 0.5;
+  } 
+  States
+  {
+  Spawn:
+    TNT1 A 0;
+    TNT1 A -1 A_Jump(256, "Spawn1", "Spawn2", "Spawn3", "Spawn4");
+  Spawn1:
+    SPLA A -1;
+    loop;
+  Spawn2:
+    SPLA B -1;
+    loop;
+  Spawn3:
+    SPLA C -1;
+    loop;
+  Spawn4:
+    SPLA D -1;
+    loop;
+  }
+}
+
+Class Gib : Actor
+{
+    int chosenSpriteId;
+    int chosenFrame;
+
+  Default {
+        Speed 0;
+        Radius 11;
+        Height 8;
+        Scale 0.5;
+        BounceType "Doom";
+        +MISSILE;
+        -NOGRAVITY;
+        +BOUNCEONACTORS;
+        +USEBOUNCESTATE;
+        Damage 0;
+        SeeSound "";
+        BounceSound "";
+        DeathSound "";
+  }
+  
+  override void PostBeginPlay() {
+  
+    switch(random(1, 16)) {
+        case 1:
+            chosenSpriteId = GetSpriteIndex("BONE");
+            chosenFrame = 0;
+            break;
+	
+        case 2:
+            chosenSpriteId = GetSpriteIndex("BONE");
+            chosenFrame = 1;
+            break;
+	
+        case 3:
+            chosenSpriteId = GetSpriteIndex("CHNK");
+            chosenFrame = 0;
+        break;
+        
+        case 4:
+            chosenSpriteId = GetSpriteIndex("CHNK");
+            chosenFrame = 1;
+        break;
+        
+        case 5:
+            chosenSpriteId = GetSpriteIndex("CHNK");
+            chosenFrame = 2;
+        break;
+        
+        case 6:
+            chosenSpriteId = GetSpriteIndex("TRSO");
+            chosenFrame = 0;
+        break;
+        
+        case 7:
+            chosenSpriteId = GetSpriteIndex("EYEB");
+            chosenFrame = 0;
+        break;
+        
+        case 8:
+            chosenSpriteId = GetSpriteIndex("MUSH");
+            chosenFrame = 0;
+        break;
+        
+        case 9:
+            chosenSpriteId = GetSpriteIndex("ORGN");
+            chosenFrame = 0;
+        break;
+        
+        case 10:
+            chosenSpriteId = GetSpriteIndex("ORGN");
+            chosenFrame = 1;
+        break;
+        
+        case 11:
+            chosenSpriteId = GetSpriteIndex("ORGS");
+            chosenFrame = 0;
+        break;
+        
+        case 12:
+            chosenSpriteId = GetSpriteIndex("RIBC");
+            chosenFrame = 0;
+        break;
+        
+        case 13:
+            chosenSpriteId = GetSpriteIndex("SPIN");
+            chosenFrame = 0;
+        break;
+        
+        case 14:
+            chosenSpriteId = GetSpriteIndex("ARMG");
+            chosenFrame = 0;
+        break;
+        
+        case 15:
+            chosenSpriteId = GetSpriteIndex("LEGG");
+            chosenFrame = 0;
+        break;
+        
+        case 16:
+            chosenSpriteId = GetSpriteIndex("LEGG");
+            chosenFrame = 2;
+        break;
+        
+        }
+  }
+  
+  States
+  {
+  Spawn:
+    TNT1 A 1 {
+        sprite = chosenSpriteId;
+        frame = chosenFrame;
+        A_SetTics(1);
+    }
+    loop;
+  Death:
+    TNT1 A 1 {
+        sprite = chosenSpriteId;
+        frame = chosenFrame;
+        A_SetTics(1);
+    }
+    loop;
+  Bounce.Floor:
+    ---- A 1 A_SpawnItemEx("CustomBloodSplash", 0, 0 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
+    goto spawn;
+  Dummy:
+    BONE AB 1;
+    CHNK AB 1;
+    TRSO AB 1;
+    EYEB AB 1;
+    MUSH AB 1;
+    ORGN AB 1;
+    ORGS AB 1;
+    RIBC AB 1;
+    SPIN AB 1;
+    ARMG AB 1;
+    LEGG AB 1;
+    stop;
+  }
+}
+
+Class PlasmaProjectile : Actor {
+
+    Default {
+        Radius 11;
+        Height 8;
+        Speed 30;
+        Damage 1;
+        Scale 0.5;
+        PROJECTILE;
+        +RANDOMIZE;
+        +ZDOOMTRANS;
+        SeeSound "effects/plasma/shot";
+        DeathSound "effets/plasma/hit";
+        Decal "PlasmaScorchLower";
+    }
+    States {
+        Spawn:
+            PLAS A 1 BRIGHT;
+            Loop;
+        Death:
+            PLAS BCD 2 BRIGHT;
+            Stop;
+        }
+
+}
+
+Class Explosion : Actor {
+
+    int damage;
+    int radius;
+
+    Default {
+        +NOBLOCKMAP;
+        +NOTELEPORT;
+        +NOGRAVITY;        
+    }
+States
+  {
+  Spawn:
+    NKXP B 3 BRIGHT;
+    NKXP C 3 BRIGHT {
+        A_PlaySound("weapons/explode");
+        A_QuakeEx (1.5, 1.5, 1.5, 10, 0, 1024 , "", QF_3D);
+        }
+    NKXP D 3 BRIGHT A_Explode(damage, radius, XF_HURTSOURCE , true, 0, 0, 0, "", "Explosion");
+    NKXP EFGHIJKLMNOPQRSTUV 3 BRIGHT;
+    Stop;
+  }
+
+}

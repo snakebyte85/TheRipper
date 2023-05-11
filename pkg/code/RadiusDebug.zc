@@ -1,0 +1,319 @@
+// Copyright 2018 - 2021 Nash Muhandes
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions
+// are met:
+//
+// 1. Redistributions of source code must retain the above copyright
+//    notice, this list of conditions and the following disclaimer.
+// 2. Redistributions in binary form must reproduce the above copyright
+//    notice, this list of conditions and the following disclaimer in the
+//    documentation and/or other materials provided with the distribution.
+// 3. The name of the author may not be used to endorse or promote products
+//    derived from this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+// IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
+// OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+// IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
+// INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+// NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+// DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+// THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
+// THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+//===========================================================================
+//
+// RadiusDebug
+// A debugging utility that lets you draw a model representation of an
+// Actor's radius
+// Written by Nash Muhandes
+//
+// Feel free to use this in your mods. No need to ask for my permission!
+//
+//===========================================================================
+
+enum ERadiusDebugModes
+{
+	RDMODE_None,
+	RDMODE_MonstersOnly,
+	RDMODE_PickupsOnly,
+	RDMODE_SolidOnly,
+	RDMODE_ShootableOnly,
+	RDMODE_All
+}
+
+class RadiusDebug : Actor
+{
+	Actor AttachTo;
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	Default
+	{
+		Radius 1;
+		Height 1;
+		//RenderStyle "STYLE_Translucent";
+		//Alpha 0.4;
+		+NOINTERACTION
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	override void Tick(void)
+	{
+		if (AttachTo)
+		{
+			if (AttachTo is "Inventory")
+			{
+				bInvisible = !AttachTo.bSpecial;
+			}
+
+			// Scale the model visually
+			Scale.X = double(Radius) * 2;
+			Scale.Y = double(Height) * Level.pixelstretch;
+
+			double r = AttachTo.Radius;
+			double h = AttachTo.Height;
+
+			// Infinite height enabled?
+			if (compat_nopassover && (AttachTo.bIsMonster || AttachTo is "PlayerPawn" || AttachTo.bSolid))
+			{
+				double verticalHeight = AttachTo.CeilingZ - AttachTo.FloorZ;
+				Scale.Y = verticalHeight * Level.pixelstretch;
+				h = verticalHeight;
+			}
+
+			// Calling A_SetSize every tic might be expensive
+			// But since this is a debugging utility, I am not
+			// going to bother to optimize this.
+			A_SetSize(r, h, false);
+
+			SetOrigin(AttachTo.Pos, true);
+		}
+		else
+		{
+			Destroy();
+		}
+
+		Super.Tick();
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	static void Enable(Actor me, bool disable = false)
+	{
+		if (me)
+		{
+			if (!disable)
+			{
+				me.A_GiveInventory("RadiusDebugMe", 1);
+			}
+			else
+			{
+				me.A_TakeInventory("RadiusDebugMe", 0x7FFFFFFF);
+			}
+		}
+	}
+
+	static void Disable(Actor me)
+	{
+		Enable(me, true);
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	States
+	{
+	Spawn:
+		0000 A -1 BRIGHT;
+		Stop;
+	}
+}
+
+class RadiusDebugMe : CustomInventory
+{
+	Actor cube;
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	Default
+	{
+		Inventory.MaxAmount 1;
+		+Inventory.UNDROPPABLE
+		+Inventory.UNTOSSABLE
+		+Inventory.AUTOACTIVATE
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	override void DoEffect(void)
+	{
+		if (Owner)
+		{
+			if (!cube)
+			{
+				cube = Spawn("RadiusDebug", Owner.Pos, NO_REPLACE);
+			}
+
+			if (cube)
+			{
+				RadiusDebug(cube).AttachTo = Owner;
+			}
+		}
+	}
+
+	override void OnDestroy(void)
+	{
+		if (cube) cube.Destroy();
+		Super.OnDestroy();
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	States
+	{
+	Use:
+		TNT1 A 0;
+		Fail;
+	Pickup:
+		TNT1 A 0
+		{
+			return true;
+		}
+		Stop;
+	}
+}
+
+class RadiusDebugHandler : EventHandler
+{
+	int rdMode, rdModeOld, rdModeNew;
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	override void WorldTick(void)
+	{
+		rdModeNew = radiusdebugmode;
+		if (rdModeOld != rdModeNew)
+		{
+			rdMode = rdModeNew;
+			rdModeOld = rdModeNew;
+
+			String rdModeNames[] =
+			{
+				"None",
+				"Monsters only",
+				"Item pickups only",
+				"Solid actors only",
+				"Shootable actors only",
+				"All actors"
+			};
+			Console.Printf("RadiusDebug mode set to \c[CYAN]%s\c-", rdModeNames[radiusdebugmode]);
+
+			UpdateRadiusDebugMode();
+		}
+	}
+
+	override void WorldThingSpawned(WorldEvent e)
+	{
+		if (radiusdebugmode <= RDMODE_None || radiusdebugmode > RDMODE_All) return;
+
+		if (!e.Thing) return;
+
+		Actor mo = e.Thing;
+
+		if (mo is "RadiusDebug" || mo is "RadiusDebugMe") return;
+
+		if (Level.totaltime > 0 && radiusdebugmode > 0)
+		{
+			UpdateRadiusDebugMode();
+		}
+	}
+
+	//===========================================================================
+	//
+	//
+	//
+	//===========================================================================
+
+	void UpdateRadiusDebugMode(void)
+	{
+		ClearRadiusDebug();
+		DoRadiusDebug(radiusdebugmode);
+	}
+
+	void ClearRadiusDebug(void)
+	{
+		ThinkerIterator it = ThinkerIterator.Create("Actor");
+		Actor mo;
+		while (mo = Actor(it.Next()))
+		{
+			RadiusDebug.Disable(mo);
+		}
+	}
+
+	void DoRadiusDebug(int mode)
+	{
+		if (radiusdebugmode <= RDMODE_None || radiusdebugmode > RDMODE_All) return;
+
+		ThinkerIterator it = ThinkerIterator.Create("Actor");
+		Actor mo;
+		while (mo = Actor(it.Next()))
+		{
+			if (mode == RDMODE_MonstersOnly && mo.bIsMonster)
+			{
+				RadiusDebug.Enable(mo);
+			}
+			else if (mode == RDMODE_PickupsOnly && (mo is "Inventory" && !mo.bDropped))
+			{
+				RadiusDebug.Enable(mo);
+			}
+			else if (mode == RDMODE_SolidOnly && mo.bSolid)
+			{
+				RadiusDebug.Enable(mo);
+			}
+			else if (mode == RDMODE_ShootableOnly && mo.bShootable)
+			{
+				RadiusDebug.Enable(mo);
+			}
+			else if (mode == RDMODE_All)
+			{
+				RadiusDebug.Enable(mo);
+			}
+		}
+	}
+}

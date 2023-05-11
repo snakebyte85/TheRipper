@@ -1,0 +1,80 @@
+class MyPlayer : PlayerPawn
+{
+
+    static void QuickAttack() {
+     
+    }
+    
+	Default
+	{
+		Speed 1;
+		Health 100;
+		Radius 16;
+		Height 56;
+		Mass 100;
+		PainChance 255;
+		Player.DisplayName "MyStandAloneGamePlayer";
+		Player.CrouchSprite "PLYC";
+		Player.ColorRange 144, 189;
+		Player.Colorset 0, "$TXT_COLOR_GREEN", 144, 191, 144;
+		Player.Colorset 1, "$TXT_COLOR_RED", 96, 143, 96;
+		Player.Colorset 2, "$TXT_COLOR_BLUE", 192, 239, 192;
+        
+        Player.StartItem "Machete";
+        Player.StartItem "PlasmaBolter";
+        Player.StartItem "Cell", 20;
+	}
+
+	States
+	{
+	Spawn:
+		PLAY A -1;
+		Loop;
+	See:
+		PLAY ABCD 4;
+		Loop;
+	Missile:
+		PLAY A 12;
+		Goto Spawn;
+	Melee:
+		PLAY A 6 BRIGHT;
+		Goto Missile;
+	Pain:
+		PLAY A 4;
+		PLAY A 4 A_Pain();
+		Goto Spawn;
+	Death:
+		PLAD A 0 A_PlayerSkinCheck("AltSkinDeath");
+	Death1:
+		PLAD A 10;
+		PLAD B 10 A_PlayerScream();
+		PLAD C 10 A_NoBlocking();
+		PLAD DDD 10;
+		PLAD E -1;
+		Stop;
+	XDeath:
+		PLAD A 0 A_PlayerSkinCheck("AltSkinXDeath");
+	XDeath1:
+		PLAD A 5;
+		PLAD B 5 A_XScream();
+		PLAD C 5 A_NoBlocking();
+		PLAD DDDDD 5;
+		PLAD E -1;
+		Stop;
+	AltSkinDeath:
+		PLAD A 6;
+		PLAD B 6 A_PlayerScream();
+		PLAD CC 6;
+		PLAD D 6 A_NoBlocking();
+		PLAD DDD 6;
+		PLAD E -1;
+		Stop;
+	AltSkinXDeath:
+		PLAD A 5 A_PlayerScream();
+		PLAD B 0 A_NoBlocking();
+		PLAD C 5 A_SkullPop();
+		PLAD DDDDDD 5;
+		PLAD E -1;
+		Stop;
+	}
+}

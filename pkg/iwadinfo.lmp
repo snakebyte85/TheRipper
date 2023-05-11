@@ -1,0 +1,10 @@
+IWAD
+{
+	Name = "The Ripper"
+	BannerColors = "dea840", "003d59"
+	Autoname = "TheRipper"
+	Game = "Doom"
+	Config = "TheRipper"
+	IWADName = "TheRipper.ipk3"
+	Mapinfo = "mapinfo/mindefaults.txt"
+}

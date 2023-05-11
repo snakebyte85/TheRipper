@@ -1,0 +1,17 @@
+:DoorOpenSmallMetal
+	play		doors/open
+	nostopcutoff
+end
+
+:DoorCloseSmallMetal
+	play		doors/open
+	nostopcutoff
+end
+
+
+[DoorSmallMetal
+	0		DoorOpenSmallMetal
+	1		DoorCloseSmallMetal
+	2		DoorOpenSmallMetal
+	3		DoorCloseSmallMetal
+]

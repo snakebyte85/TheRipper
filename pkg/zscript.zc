@@ -1,0 +1,16 @@
+version "3.3.2"
+
+#include "code/base.zc"
+
+#include "code/Player.zc"
+#include "code/civillians.zc"
+#include "code/hud.zc"
+#include "code/weapons.zc"
+#include "code/enemies.zc"
+
+#include "code/effects.zc"
+#include "code/special.zc"
+
+#include "code/props.zc"
+
+#include "code/RadiusDebug.zc"

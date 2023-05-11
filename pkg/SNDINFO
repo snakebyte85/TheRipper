@@ -1,0 +1,71 @@
+// Machete
+MacheteHitThing		DSMACHT2
+MacheteHitWall		DSMACHT3	
+MacheteSwing		DSMACHT1
+
+// Plasma bolter
+weapons/boltfire	BOLTFIRE
+
+// bearkiller
+KFFIRE KFFIRE
+KFRELOAD KFRELOAD
+KFCLS	KFCLS
+KFOPN	KFOPN
+
+// smg
+SMGFIRE SMGFIRE
+
+// 40 mm grenade launcher
+40mm/grenfire gfire
+40mm/grenbounce bounce
+
+explode1 explode1
+explode2 explode2
+explode3 explode3
+explode4 explode4
+$RANDOM 40mm/grenexplode { explode1 explode2 explode3 explode4 }
+
+//Pipebomb
+
+weapons/pbbounce		dspipbnc
+weapons/pbthrow		        dspipthr
+weapons/pbarm		        dspiparm
+weapons/explode1	        dspipex1
+weapons/explode2	        dspipex2
+weapons/explode3	        dspipex3
+weapons/explode4	        dspipex4
+$random weapons/explode  { weapons/explode1 weapons/explode2 weapons/explode3 weapons/explode4 }
+
+// ironxbow
+BowString          xbow2
+
+
+// sawthrower
+weapons/throwsawup		dstsawup
+weapons/throwsawready		dstsawrd
+weapons/throwsawcut		dstsawct
+weapons/throwsawlaunch		dstsawln
+weapons/throwsawhit		dstsawht
+weapons/throwsawdamage		dstsawdm
+
+// ------------------EFFECTS
+
+KnifeHit DSKNIFE
+doors/open DOOROPEN
+
+
+// --------------- ENEMIES ------------------
+
+// cockroach
+
+enemies/cockroachgrunt1 CRGRUNT1
+enemies/cockroachgrunt2 CRGRUNT2
+enemies/cockroachsee1 CRSEE1
+enemies/cockroachsee2 CRSEE2
+enemies/cockroachpain1 CRPAIN1
+enemies/cockroachpain2 CRPAIN2
+
+$random enemies/cockroachgrunt { enemies/cockroachgrunt1 enemies/cockroachgrunt2 }
+$random enemies/cockroachsee { enemies/cockroachsee1 enemies/cockroachsee2 }
+$random enemies/cockroachpain { enemies/cockroachpain1 enemies/cockroachpain2 }
+enemies/cockroachdeath CRDEATH

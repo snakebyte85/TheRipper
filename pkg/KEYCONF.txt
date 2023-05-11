@@ -1,0 +1,3 @@
+addkeysection "My Keysection" MySampleKeysection
+addmenukey "Quick kick" +user1
+defaultbind Q "+user1"
