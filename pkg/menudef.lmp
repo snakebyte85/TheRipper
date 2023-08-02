@@ -96,4 +96,3 @@ OptionValue "RadiusDebugModes"
 	4, "Shootable actors only"
 	5, "All actors"
 }
-

@@ -12,7 +12,7 @@ maps
 		{
 		}
 		defaultfloortexture = "01DMDA02";
-		defaultceiltexture = "CEIL1-1";
+		defaultceiltexture = "0BKMTA01";
 		defaulttoptexture = "01DMDA02";
 		defaultwalltexture = "01DMDA02";
 		defaultbottomtexture = "01DMDA02";
@@ -28,9 +28,9 @@ maps
 		overrideceilheight = false;
 		overridebrightness = false;
 		uselongtexturenames = false;
-		viewpositionx = -588.9128f;
-		viewpositiony = -213.1911f;
-		viewscale = 1.098499f;
+		viewpositionx = -456.4846f;
+		viewpositiony = 313.1302f;
+		viewscale = 1.098495f;
 		scriptcompiler = "zdoom_acs.cfg";
 		
 		grid
@@ -73,6 +73,30 @@ maps
 			autocloseonsuccess = true;
 			exitcodeiserror = true;
 			stderriserror = true;
+		}
+		
+		scriptdocuments
+		{
+			
+			document0
+			{
+				filename = "DIALOGUE";
+				hash = 3588187714;
+				resource;
+				tabtype = 0;
+				scripttype = 18;
+			}
+			
+			document1
+			{
+				filename = "SCRIPTS";
+				hash = 3469170009;
+				resource;
+				tabtype = 0;
+				scripttype = 1;
+				caretposition = 8;
+				activetab = true;
+			}
 		}
 	}
 }

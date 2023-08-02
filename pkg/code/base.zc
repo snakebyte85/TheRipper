@@ -7,165 +7,53 @@ class Utils {
 			thing.Activate(activator);
 		}
     }
-}
 
-class MyWeapon : Weapon {
-
-    Default {
-        //$Category Weapons
+    
+    static play int GetSectorTagFromSpecialFromThing(Actor thing) {
+        if(thing.special == 0) {
+            return 0;
+        } else {
+            return thing.args[0]; // TODO check if the action special use args[0] for the sector tag
+        }        
     }
+    
+    static bool IsSectorBusy(int tag) {
+        let it = Level.CreateSectorTagIterator(tag);
+        int i;
 
-    private int lastQuickKickTime;
-    const QUICK_KICK_DELAY_TICS=35*0.5;
-    const PSP_QUICK_KICK = -100;
+        while ((i = it.Next()) != -1) {
+            let sec = Level.sectors[i];
 
-    override void DoEffect() {
-        Super.DoEffect();
-        if(!owner || !owner.player) {
-			return;
-        }
-        if (!owner.player.ReadyWeapon || owner.player.ReadyWeapon != self) {
-            return;
-        }
-        if (owner.health < 1) {
-            return;
-        }
-        if (owner.player.cmd.buttons & BT_USER1 && !(owner.player.oldbuttons & BT_USER1) ) {
-            if ( level.time - lastQuickKickTime > QUICK_KICK_DELAY_TICS ) {
-                owner.player.setPSprite(PSP_QUICK_KICK,ResolveState("QuickKick"));
-                lastQuickKickTime = level.time;
+            if (sec.floordata != null || sec.ceilingdata != null) {
+                return true;
             }
         }
-     }
-        
-     States {
-        QuickKick:
-            KICK A 5;
-            KICK B 5 {
-                let oldKickback = invoker.kickback;
-                invoker.kickback=5000;
-                invoker.bforcepain=!invoker.bforcepain;
-                A_CustomPunch (5,0,0,"BulletPuff", 64,0,0, "ArmorBonus", "", "");
-                invoker.kickback = oldKickback;
-                invoker.bforcepain=!invoker.bforcepain;
-                }
-            KICK A 5;
-            stop;
-        }
-}
 
-class MyMonster : Actor {
-
-    Default{
-        //$Category Monsters
-    }
-
-    enum JumpStatusEnum{
-        START,
-        UP,
-        DOWN,
-        END
-    }
-    
-    private JumpStatusEnum jumpStatus;
-    
-    override void PostBeginPlay()
-    {
-        Super.PostBeginPlay();
-        jumpStatus=END;
-    }
-
-    protected double maxDistanceToTriggerJump;
-    protected double maxHeightToTriggerJump;
-    protected double horizontalThrustJump;
-    protected double verticalThrustJump;
-    protected int jumpChance;
-    
-    property MaxDistanceToTriggerJump : maxDistanceToTriggerJump;
-    property MaxHeightToTriggerJump : maxHeightToTriggerJump;
-    property JumpChance: jumpChance;
-    property HorizontalThrustJump: horizontalThrustJump;
-    property VerticalThrustJump: verticalThrustJump;
-    
-    Default {
-        MyMonster.MaxDistanceToTriggerJump 600;
-        MyMonster.MaxHeightToTriggerJump 300;
-        MyMonster.JumpChance 128;
-        MyMonster.HorizontalThrustJump 16;
-        MyMonster.VerticalThrustJump 16;
-    }
-    
-    protected double GetGroundHeight(){
-        double groundHeight = GetZAt();
-        bool ok;
-        Actor otherActor;
-        [ok, otherActor] = TestMobjZ(true);
-        if (!otherActor) { 
-            return groundHeight;
-        } else {
-            double otherActorZ = otherActor.pos.z+otherActor.height;
-            return max(groundHeight, otherActorZ);
-        }
-    }
-    
-
-    protected bool AmIOnGround() {
-        return (abs(GetGroundHeight() - pos.z) < 1);
-    }
-    
-    protected bool DoINeedToJump() {
-        if (!target) {
-            return false;
-        }
-        
-        if ( AmIOnGround() &&
-            random(0,255) <= jumpChance &&
-            abs(target.pos.z - pos.z) > MaxStepHeight &&
-            abs(target.pos.z - pos.z) < MaxHeightToTriggerJump &&
-            Distance2D(target) < MaxDistanceToTriggerJump ) {        
-            return true;        
-        }        
         return false;
     }
-    
-    protected void A_Jumping(stateLabel jumpingUpState="JumpingUp", stateLabel jumpingDownState="JumpingDown", stateLabel endJumpingState="See") {
-    
-        if (AmIOnGround()) {        
-            if (jumpStatus == END) {
-                jumpStatus = START;
-                A_FaceTarget();       
-                A_ChangeVelocity(HorizontalThrustJump, 0, VerticalThrustJump, CVF_RELATIVE);
-            } else {
-                jumpStatus = END;
-                SetStateLabel(endJumpingState);
-            }
-        
-        } else if (vel.z > 0) {
-            jumpStatus = UP;
-            if (vel.x == 0 && vel.y == 0) {
-                A_ChangeVelocity(3, 0, 0, CVF_RELATIVE);
-            }            
-            SetStateLabel(jumpingUpState);
-        } else if (vel.z <= 0) {
-            jumpStatus = DOWN;            
-            SetStateLabel(jumpingDownState);
-        }
-    }
-    
+}
+
+class MyActor : Actor {
+
     States {
         Death.Extreme:
         Death.Explosion:
-            BEXP A 1 {
-                A_SpawnItemEx("BloodSplat", 5, 0 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
-                A_SpawnItemEx("BloodSplat", 0, 5 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
-                A_SpawnItemEx("BloodSplat", 3, 3 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
-                A_SpawnItemEx("BloodSplat", 0, 0 ,- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
-                A_SpawnItemEx("Gib", 0, 0, 0, frandom(-10,10), frandom(-10,10), frandom(3,15));
-                A_SpawnItemEx("Gib", 0, 0, 0, frandom(-10,10), frandom(-10,10), frandom(3,15));
-                A_SpawnItemEx("Gib", 0, 0, 0, frandom(-10,10), frandom(-10,10), frandom(3,15));
-                A_SpawnItemEx("Gib", 0, 0, 0, frandom(-10,10), frandom(-10,10), frandom(3,15));
+            BMBE N 5 {
+                if(random(0,1) == 1) {
+                    bXFlip=true;
+                }
+                A_XScream();
+                A_NoBlocking();
+                for (int i=0; i < random(7,10); i++) {
+                    A_SpawnItemEx("BloodSplat", frandom(0,20), frandom(0,20),- (Pos.Z - GetZAt()), 0, 0, 0, frandom(-180,180));
+                }
+                for (int i=0; i < random(5,7); i++) {
+                    A_SpawnItemEx("Gib", 0, 0, 0, frandom(-10,10), frandom(-10,10), frandom(3,15));
+                }
             }
-            BEXP BCDEFGHIJ 3;
+            BMBE OPQRST 5;
+            BMBE U -1;
             stop;
         }
 }
+

@@ -1,43 +1,103 @@
+// Player
+
+player/afterkill1 "sounds/player/afterkill1.wav"
+player/afterkill2 "sounds/player/afterkill2.wav"
+player/afterkill3 "sounds/player/afterkill3.wav"
+player/afterkill4 "sounds/player/afterkill4.wav"
+player/afterkill5 "sounds/player/afterkill5.wav"
+player/afterkill6 "sounds/player/afterkill6.wav"
+player/afterkill7 "sounds/player/afterkill7.wav"
+player/afterkill8 "sounds/player/afterkill8.wav"
+player/afterkill9 "sounds/player/afterkill9.wav"
+$random player/afterkill { player/afterkill1 player/afterkill2 player/afterkill3 player/afterkill4 player/afterkill5 player/afterkill6 player/afterkill7 player/afterkill8 player/afterkill9 }
+
+player/startlevel1 "sounds/player/startlevel1.wav"
+player/startlevel2 "sounds/player/startlevel2.wav"
+player/startlevel3 "sounds/player/startlevel3.wav"
+player/startlevel4 "sounds/player/startlevel4.wav"
+$random player/startlevel { player/startlevel1 player/startlevel2 player/startlevel3 player/startlevel4 }
+
+
+player/jump1 jump1
+player/jump2 jump2
+$random player/jump { player/jump1 player/jump2 }
+$playeralias player male *jump player/jump
+$playeralias player male *splat effects/splat
+$playersound player male *land land
+$playersound player male *falling fall
+
+player/pain1 pain1
+player/pain2 pain2
+player/pain3 pain3
+player/pain4 pain4
+player/pain5 pain5
+player/pain6 pain6
+player/pain7 pain7
+player/pain8 pain8
+player/pain9 pain9
+
+$random player/pain100 { player/pain1 player/pain2 }
+$random player/pain75 { player/pain3 player/pain4 }
+$random player/pain50 { player/pain5 player/pain6 player/pain8 }
+$random player/pain25 { player/pain7 player/pain9 }
+
+$playeralias player male *pain25  player/pain25
+$playeralias player male *pain50  player/pain50
+$playeralias player male *pain75  player/pain75
+$playeralias player male *pain100 player/pain100
+
+player/death1 death1
+player/death2 death2
+player/death3 death3
+player/death4 death4
+
+$random player/death { player/death1 player/death2 player/death3 player/death4 }
+$playeralias player male *death player/death
+    
+$playersound player male *dive inhale
+$playersound player male *surface exhale
+
+// ---- WEAPONS -----
+
 // Machete
-MacheteHitThing		DSMACHT2
-MacheteHitWall		DSMACHT3	
-MacheteSwing		DSMACHT1
+weapons/Machete/HitThing DSMACHT2
+weapons/Machete/HitWall  DSMACHT3	
+weapons/Machete/Swing	DSMACHT1
 
 // Plasma bolter
-weapons/boltfire	BOLTFIRE
+weapons/plasmabolter/fire BOLTFIRE
 
 // bearkiller
-KFFIRE KFFIRE
-KFRELOAD KFRELOAD
-KFCLS	KFCLS
-KFOPN	KFOPN
+weapons/BearKiller/Fire KFFIRE
+weapons/BearKiller/Reload KFRELOAD
+weapons/BearKiller/Close KFCLS
+weapons/BearKiller/Open KFOPN
 
 // smg
-SMGFIRE SMGFIRE
+weapons/smg/fire SMGFIRE
 
-// 40 mm grenade launcher
-40mm/grenfire gfire
-40mm/grenbounce bounce
+// m60
+weapons/m60/fire   MG60FR
+weapons/m60/reload M60RL
 
-explode1 explode1
-explode2 explode2
-explode3 explode3
-explode4 explode4
-$RANDOM 40mm/grenexplode { explode1 explode2 explode3 explode4 }
+// grenade launcher
+weapons/grenade/fire gfire
+weapons/grenade/bounce bounce
 
 //Pipebomb
 
-weapons/pbbounce		dspipbnc
-weapons/pbthrow		        dspipthr
-weapons/pbarm		        dspiparm
-weapons/explode1	        dspipex1
-weapons/explode2	        dspipex2
-weapons/explode3	        dspipex3
-weapons/explode4	        dspipex4
-$random weapons/explode  { weapons/explode1 weapons/explode2 weapons/explode3 weapons/explode4 }
+weapons/pipe/bounce dspipbnc
+weapons/pipe/throw  dspipthr
+weapons/pipe/arm   dspiparm
 
-// ironxbow
-BowString          xbow2
+//AUTOCROSSBOW
+weapons/acrossbow/equip		ACBWEQP
+weapons/acrossbow/fire		ACBWFIRE
+weapons/acrossbow/detach	ACBWRDTC
+weapons/acrossbow/attach	ACBWRATC
+weapons/acrossbow/load		ACBWRLD
+weapons/acrossbow/impact	ARRIMPCT
+$pitchset	dart/impact	1.2
 
 
 // sawthrower
@@ -48,24 +108,285 @@ weapons/throwsawlaunch		dstsawln
 weapons/throwsawhit		dstsawht
 weapons/throwsawdamage		dstsawdm
 
-// ------------------EFFECTS
+// ------------------EFFECTS------------------
 
-KnifeHit DSKNIFE
+effects/explode1	        dspipex1
+effects/explode2	        dspipex2
+effects/explode3	        dspipex3
+effects/explode4	        dspipex4
+$random effects/explode  { effects/explode1 effects/explode2 effects/explode3 effects/explode4 }
+
+water/splash1 SPLASH1
+water/splash2 SPLASH2
+
+$random water/splash { water/splash1 water/splash2 }
+
+AmbientUnderwater undwater
+
+effects/splat1 SPLAT1
+effects/splat2 SPLAT2
+effects/splat3 SPLAT3
+effects/splat4 SPLAT4
+effects/splat5 SPLAT5
+effects/splat6 SPLAT6
+effects/splat7 SPLAT7
+$random effects/splat  { effects/splat1 effects/splat2 effects/splat3 effects/splat4 effects/splat5 effects/splat6 effects/splat7 }
+
 doors/open DOOROPEN
 
+effects/teleport teleport
 
 // --------------- ENEMIES ------------------
 
 // cockroach
 
-enemies/cockroachgrunt1 CRGRUNT1
-enemies/cockroachgrunt2 CRGRUNT2
-enemies/cockroachsee1 CRSEE1
-enemies/cockroachsee2 CRSEE2
-enemies/cockroachpain1 CRPAIN1
-enemies/cockroachpain2 CRPAIN2
+enemies/cockroach/act1 CRACT1
+enemies/cockroach/act2 CRACT2
+enemies/cockroach/act3 CRACT3
+enemies/cockroach/see1 CRSEE1
+enemies/cockroach/see2 CRSEE2
+enemies/cockroach/see3 CRSEE3
+enemies/cockroach/pain1 CRPAIN1
+enemies/cockroach/pain2 CRPAIN2
+enemies/cockroach/pain3 CRPAIN3
+enemies/cockroach/death1 CRDEATH1
+enemies/cockroach/death2 CRDEATH2
+enemies/cockroach/death3 CRDEATH3
 
-$random enemies/cockroachgrunt { enemies/cockroachgrunt1 enemies/cockroachgrunt2 }
-$random enemies/cockroachsee { enemies/cockroachsee1 enemies/cockroachsee2 }
-$random enemies/cockroachpain { enemies/cockroachpain1 enemies/cockroachpain2 }
-enemies/cockroachdeath CRDEATH
+$random enemies/cockroach/active { enemies/cockroach/act1 enemies/cockroach/act2 enemies/cockroach/act3 }
+$volume enemies/cockroach/active 0.5
+$random enemies/cockroach/see { enemies/cockroach/see1 enemies/cockroach/see2 enemies/cockroach/see3 }
+$volume enemies/cockroach/see 0.5
+$random enemies/cockroach/pain { enemies/cockroach/pain1 enemies/cockroach/pain2 enemies/cockroach/pain3 }
+$volume enemies/cockroach/pain 0.5
+$random enemies/cockroach/death { enemies/cockroach/death1 enemies/cockroach/death2 enemies/cockroach/death3 }
+$volume enemies/cockroach/death 0.5
+
+
+// Trite
+
+$Random enemies/Trite/Sight { TRITSIG1 TRITSIG2 TRITSIG3 }
+TRITSIG1		TRITSIG1
+TRITSIG2		TRITSIG2
+TRITSIG3		TRITSIG3
+TRITSIG4		TRITSIG4
+$Random enemies/Trite/Active { TRITACT1 TRITACT2 TRITACT3 }
+TRITACT1		TRITACT1
+TRITACT2		TRITACT2
+TRITACT3		TRITACT3
+$Random enemies/Trite/Attack { TRITATT1 TRITATT2 TRITATT3 }
+TRITATT1		TRITATT1
+TRITATT2		TRITATT2
+TRITATT3		TRITATT3
+$Random enemies/Trite/MeleeHit { TRITHIT1 TRITHIT2 }
+TRITHIT1		TRITHIT1
+TRITHIT2		TRITHIT2
+$Random enemies/Trite/Step { TRITSTE1 TRITSTE2 TRITSTE3 TRITSTE4 }
+TRITSTE1		TRITSTE1
+TRITSTE2		TRITSTE2
+TRITSTE3		TRITSTE3
+TRITSTE4		TRITSTE4
+Trite/Web		TRITWEB2
+$Random enemies/Trite/Pain { TRITPAI1 TRITPAI2 TRITPAI3 }
+TRITPAI1		TRITPAI1
+TRITPAI2		TRITPAI2
+TRITPAI3		TRITPAI3
+$Random enemies/Trite/Death { TRITDEA1 TRITDEA2 TRITDEA3 }
+TRITDEA1		TRITDEA1
+TRITDEA2		TRITDEA2
+TRITDEA3		TRITDEA3
+$Random enemies/Trite/Splat { TRITSPL1 TRITSPL2 }
+TRITSPL1		TRITSPL1
+TRITSPL2		TRITSPL2
+
+$Volume enemies/Trite/Sight 0.5
+$Volume enemies/Trite/Active 0.5
+$Volume enemies/Trite/Attack 0.5
+$Volume enemies/Trite/MeleeHit 0.5
+$Volume enemies/Trite/Pain 0.5
+$Volume enemies/Trite/Death 0.5
+$Volume enemies/Trite/Splat 0.5
+$Volume enemies/Trite/Step 0.2
+
+
+// kamikazi
+enemies/kamikazi/scream		DSKAMAAH
+enemies/kamikazi/idle		DSKAMIDL
+
+// incubus
+enemies/incubus/sight			dsincsit
+enemies/incubus/attack1			dsincat1
+enemies/incubus/attack2			dsincat2
+enemies/incubus/pain			dsincpai
+enemies/incubus/death			dsincdth
+enemies/incubus/active			dsincact
+enemies/incubus/shot			dsincsht
+enemies/incubus/hit			dsinchit
+weapons/homingexplode		dshomxpl
+$limit weapons/rocklf     32
+
+$random enemies/incubus/walk	{ dsinwlk1 dsinwlk2 dsinwlk3 dsinwlk4 }
+dsinwlk1	dsinwlk1
+dsinwlk2	dsinwlk2
+dsinwlk3	dsinwlk3
+dsinwlk4	dsinwlk4
+
+// Vagmouth
+
+enemies/vagmouth/attack1 VMACT1
+enemies/vagmouth/attack2 VMATT2
+enemies/vagmouth/attack3 VMATT3
+enemies/vagmouth/act1 VMACT1
+enemies/vagmouth/act2 VMACT2
+enemies/vagmouth/see1 VMSEE1
+enemies/vagmouth/see2 VMSEE2
+enemies/vagmouth/see3 VMSEE3
+enemies/vagmouth/pain1 VMAIN1
+enemies/vagmouth/pain2 VMPAIN2
+enemies/vagmouth/death1 VMDEAD1
+enemies/vagmouth/death2 VMDEAD2
+
+$random enemies/vagmouth/active { enemies/vagmouth/act1 enemies/vagmouth/act2 }
+$volume enemies/vagmouth/active 0.5
+$random enemies/vagmouth/see { enemies/vagmouth/see1 enemies/vagmouth/see2 enemies/vagmouth/see3 }
+$volume enemies/vagmouth/see 0.5
+$random enemies/vagmouth/pain { enemies/vagmouth/pain1 enemies/vagmouth/pain2 }
+$volume enemies/vagmouth/pain 0.5
+$random enemies/vagmouth/death { enemies/vagmouth/death1 enemies/vagmouth/death2 }
+$volume enemies/vagmouth/death 0.5
+$random enemies/vagmouth/attack { enemies/vagmouth/attack1 enemies/vagmouth/attack2 enemies/vagmouth/attack3 }
+$volume enemies/vagmouth/attack 0.5
+
+// ----------------- Footsteps -------------------------
+// Sound Info
+
+// Define the actual sounds here
+
+// Default / Ground
+step/default1			DSSTP1
+step/default2			DSSTP2
+step/default3			DSSTP3
+step/default4			DSSTP4
+$random step/default { step/default1  step/default2  step/default3  step/default4 }
+
+// Water
+step/water1			DSWTR1
+step/water2			DSWTR2
+step/water3			DSWTR3
+step/water4			DSWTR4
+$random step/water { step/water1  step/water2  step/water3  step/water4 }
+
+// Carpet
+step/carpet1			DSCARP1
+step/carpet2			DSCARP2
+step/carpet3			DSCARP3
+$random step/carpet { step/carpet1 step/carpet2 step/carpet3 }
+
+// Dirt
+step/dirt1			DSDIRT1
+step/dirt2			DSDIRT2
+step/dirt3			DSDIRT3
+step/dirt4			DSDIRT4
+step/dirt5			DSDIRT5
+step/dirt6			DSDIRT6
+$random step/dirt { step/dirt1 step/dirt2 step/dirt3 step/dirt4 step/dirt5 step/dirt6 }
+
+// Gravel
+step/gravel1			DSGRAV1
+step/gravel2			DSGRAV2
+step/gravel3			DSGRAV3
+step/gravel4			DSGRAV4
+$random step/gravel { step/gravel1 step/gravel2 step/gravel3 step/gravel4 }
+
+// Hard
+step/hard1			DSHARD1
+step/hard2			DSHARD2
+step/hard3			DSHARD3
+step/hard4			DSHARD4
+step/hard5			DSHARD5
+step/hard6			DSHARD6
+$random step/hard { step/hard1 step/hard2 step/hard3 step/hard4 step/hard5 step/hard6 }
+
+// Metal A
+step/metal/a1			DSMET01
+step/metal/a2			DSMET02
+step/metal/a3			DSMET03
+step/metal/a4			DSMET04
+step/metal/a5			DSMET05
+step/metal/a6			DSMET06
+$random step/metal/a { step/metal/a1 step/metal/a2 step/metal/a3 step/metal/a4 step/metal/a5 step/metal/a6 }
+
+// Metal B (Thin Metals, Girders)
+step/metal/b1			DSMET201
+step/metal/b2			DSMET202
+step/metal/b3			DSMET203
+step/metal/b4			DSMET204
+$random step/metal/b { step/metal/b1 step/metal/b2 step/metal/b3 step/metal/b4 }
+
+// Rock
+step/rock1			DSROCK1
+step/rock2			DSROCK2
+step/rock3			DSROCK3
+step/rock4			DSROCK4
+step/rock5			DSROCK5
+step/rock6			DSROCK6
+step/rock7			DSROCK7
+step/rock8			DSROCK8
+$random step/rock { step/rock1 step/rock2 step/rock3 step/rock4 step/rock5 step/rock6 step/rock7 step/rock8 }
+
+// Snow
+step/snow1			DSSNOW1
+step/snow2			DSSNOW2
+step/snow3			DSSNOW3
+step/snow4			DSSNOW4
+step/snow5			DSSNOW5
+step/snow6			DSSNOW6
+$random step/snow { step/snow1 step/snow2 step/snow3 step/snow4 step/snow5 step/snow6 }
+
+// Tile A
+step/tile/a1			DSTILE01
+step/tile/a2			DSTILE02
+step/tile/a3			DSTILE03
+step/tile/a4			DSTILE04
+step/tile/a5			DSTILE05
+step/tile/a6			DSTILE06
+$random step/tile/a { step/tile/a1 step/tile/a2 step/tile/a3 step/tile/a4 step/tile/a5 step/tile/a6 }
+
+// Tile B (Hallways, Marble/Finer Tiles)
+step/tile/b1			DSTILE21
+step/tile/b2			DSTILE22
+step/tile/b3			DSTILE23
+step/tile/b4			DSTILE24
+step/tile/b5			DSTILE25
+step/tile/b6			DSTILE26
+step/tile/b7			DSTILE27
+step/tile/b8			DSTILE28
+$random step/tile/b { step/tile/b1 step/tile/b2 step/tile/b3 step/tile/b4 step/tile/b5 step/tile/b6 step/tile/b7 step/tile/b8 }
+
+// Wood
+step/wood1			DSWOOD1
+step/wood2			DSWOOD2
+step/wood3			DSWOOD3
+step/wood4			DSWOOD4
+$random step/wood { step/wood1 step/wood2 step/wood3 step/wood4 }
+
+// Slime
+step/slime1			DSSLIME1
+step/slime2			DSSLIME2
+step/slime3			DSSLIME3
+step/slime4			DSSLIME4
+$random step/slime { step/slime1 step/slime2 step/slime3 step/slime4 }
+
+// Slimy
+step/slimy1			DSSLIMY1
+step/slimy2			DSSLIMY2
+step/slimy3			DSSLIMY3
+step/slimy4			DSSLIMY4
+$random step/slimy { step/slimy1 step/slimy2 step/slimy3 step/slimy4 }
+
+// Lava
+step/lava1			DSLAVA1
+step/lava2			DSLAVA2
+step/lava3			DSLAVA3
+step/lava4			DSLAVA4
+$random step/lava { step/lava1 step/lava2 step/lava3 step/lava4 }

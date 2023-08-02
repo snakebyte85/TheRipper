@@ -1,0 +1,87 @@
+class Footsteps : Actor
+{
+    //the player footsteps are attached to.
+    PlayerPawn toFollow;
+    
+    const FSTEP_DELAY_MUL = 0.7;
+    const FSTEP_DELAY_OFFSET = 35;
+
+    array<string> fstep_sounds;
+    array<int> fstep_textures;
+    
+    int next_update_tics_countdown;
+    
+    private INIFile data;
+
+    //attach PlayerPawn, load the texture/sound associated tables.
+    void Init( PlayerPawn attached_player)
+	{
+        next_update_tics_countdown = -1;
+        self.toFollow = attached_player;
+        
+        data.ReadLumpsNamed("footsteps");
+    }
+
+    override void Tick()
+	{  
+        next_update_tics_countdown--;
+        
+        if (next_update_tics_countdown > 0) {
+            Super.Tick();
+            return;
+        }
+        
+        SetOrigin(self.toFollow.pos, true);
+        self.floorz = self.toFollow.floorz;
+           
+        double player_speed2d = sqrt(self.toFollow.vel.x * self.toFollow.vel.x + self.toFollow.vel.y * self.toFollow.vel.y);
+        
+        if ((CVar.GetCvar("footsteps_enabled").GetInt() > 0) && (player_speed2d > 0.1) && (self.toFollow.pos.z - self.toFollow.floorz <= 0 || self.toFollow.Waterlevel == 1 || self.toFollow.Waterlevel == 2)) {
+                         
+            TextureID playerFloorTxId = self.toFollow.floorpic;
+            int player_floor_tx_id = int(playerFloorTxId);
+           
+            double soundLevel = CVar.GetCvar("footsteps_volume_mul").GetFloat() * player_speed2d;
+                  
+            int foundIndex  = fstep_textures.Find(player_floor_tx_id);
+            
+            if (foundIndex != fstep_textures.Size()) {
+                S_Sound(fstep_sounds[foundIndex], CHAN_AUTO, soundLevel);
+            }
+            else {
+                String soundName;                
+                soundName = data.Get(Texman.GetName(playerFloorTxId), "sound");
+                
+                if(!soundName ) {      
+                    soundName=data.Get("DEFAULT","sound");
+                } else {
+                    fstep_sounds.Push(soundName);
+                    fstep_textures.Push(player_floor_tx_id);
+                }
+                S_Sound(soundName,  CHAN_AUTO, soundLevel);          
+            }
+                    
+            next_update_tics_countdown =  (FSTEP_DELAY_OFFSET - player_speed2d) * FSTEP_DELAY_MUL;
+           
+        } else {
+            next_update_tics_countdown = 2;
+        }
+        
+        Super.Tick();
+    }  
+}
+
+class FootstepsInit : EventHandler
+{
+    override void PlayerEntered( PlayerEvent e )
+    {
+        if ( e.playerNumber == 0 )
+        {
+            let fs = Footsteps( Actor.Spawn("Footsteps") );
+            if ( fs )
+            {
+                fs.Init( players[ 0 ].mo );
+            }
+        }
+    }
+}

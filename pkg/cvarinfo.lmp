@@ -1,1 +1,6 @@
+// radius debug
 server int radiusdebugmode = 0;
+
+// footsteps
+server float footsteps_volume_mul = 0.8;
+server int footsteps_enabled = 1;

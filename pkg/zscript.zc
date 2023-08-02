@@ -3,7 +3,7 @@ version "3.3.2"
 #include "code/base.zc"
 
 #include "code/Player.zc"
-#include "code/civillians.zc"
+#include "code/civilians.zc"
 #include "code/hud.zc"
 #include "code/weapons.zc"
 #include "code/enemies.zc"
@@ -13,4 +13,6 @@ version "3.3.2"
 
 #include "code/props.zc"
 
-#include "code/RadiusDebug.zc"
+#include "code/lib/radiusdebug.zc"
+#include "code/lib/footsteps.zc"
+#include "code/lib/inifile.zc"

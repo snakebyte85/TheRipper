@@ -1,3 +1,19 @@
+Class CustomTeleportFog : TeleportFog replaces TeleportFog
+{
+    Default {
+        Scale 0.5;        
+    }
+
+  States{
+  Spawn:
+    TELE A 1 Bright;
+    TELE B 1 Bright A_StartSound("effects/teleport");
+    TELE CDEFGH 1 Bright;
+    Stop;
+  }
+  
+}
+
 Class CustomBloodSplatter : BloodSplatter replaces BloodSplatter
 {
     Default
@@ -107,8 +123,8 @@ Class Gib : Actor
         +USEBOUNCESTATE;
         Damage 0;
         SeeSound "";
-        BounceSound "";
-        DeathSound "";
+        BounceSound "effets/splat";
+        DeathSound "effects/splat";
   }
   
   override void PostBeginPlay() {
@@ -273,12 +289,46 @@ States
   Spawn:
     NKXP B 3 BRIGHT;
     NKXP C 3 BRIGHT {
-        A_PlaySound("weapons/explode");
+        A_PlaySound("effects/explode");
         A_QuakeEx (1.5, 1.5, 1.5, 10, 0, 1024 , "", QF_3D);
+        A_AttachLightDef("Explosion", "Explosion");
         }
     NKXP D 3 BRIGHT A_Explode(damage, radius, XF_HURTSOURCE , true, 0, 0, 0, "", "Explosion");
-    NKXP EFGHIJKLMNOPQRSTUV 3 BRIGHT;
+    NKXP EFGHIJKLMNOPQR 3 BRIGHT;
+    NKXP R 3 BRIGHT A_RemoveLight("Explosion");  
+    NKXP STU 3 BRIGHT;
     Stop;
   }
 
+}
+
+Class CustomWaterSplash : Actor
+{
+    Default {
+    +NOBLOCKMAP
+    +NOCLIP
+    +NOGRAVITY
+    +DONTSPLASH
+    +DONTBLAST
+    } 
+
+  States
+  {
+  Spawn:
+    WSPL ABCD 5;
+    Stop;
+  }
+  
+}
+
+class CustomWaterZone : Waterzone replaces Waterzone
+{
+	override void PostBeginPlay ()
+	{
+		Super.PostBeginPlay();
+		CurSector.SetColor(Color(255, 128, 128, 255)); 
+		Destroy();
+	}
+
+	
 }

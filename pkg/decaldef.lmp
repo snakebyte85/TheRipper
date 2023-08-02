@@ -199,3 +199,31 @@ decalgroup PlasmaScorchLower
 	PlasmaScorchLower1	1
 	PlasmaScorchLower2	1
 }
+
+
+generator DartProj BulletChip
+
+
+decal IncubusPhotonShotScorchLower
+{
+	pic INCSC0
+	x-scale 0.6
+	y-scale 0.6
+	shade "00 00 00"
+	animator Clean
+	randomflipx
+	randomflipy
+}
+
+decal IncubusPhotonShotScorch
+{
+	pic INCSC0
+	x-scale 0.6
+	y-scale 0.6
+	add 1.0
+	fullbright
+	animator GoAway
+	lowerdecal IncubusPhotonShotScorchLower
+}
+
+generator IncubusPhotonShot			IncubusPhotonShotScorch

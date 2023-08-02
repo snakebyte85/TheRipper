@@ -83,6 +83,25 @@ Class ExplosionSpecialEffect : SpecialEffect {
     }
 }
 
+Class ActivationSpecialEffect : SpecialEffect {
+
+    Default {
+        //$Title Activation Special Effect
+        //$Sprite ACTIA0
+        //$Arg0 Thing to activate
+        //$Arg0Type 14
+        Activation THINGSPEC_ThingActs;
+    }
+    
+    override void Activate(Actor activator) {
+        if(Special==0) {
+            Utils.ActivateThings(args[0], self);
+        } else {
+            A_CallSpecial(special, args[0], args[1], args[2], args[3], args[4]);
+        }
+    }
+}
+
 Class MultiActivationSpecialEffect : SpecialEffect {
 
     Default {
@@ -93,6 +112,11 @@ Class MultiActivationSpecialEffect : SpecialEffect {
         //$Arg2 Thing 3 to activate
         //$Arg3 Thing 4 to activate
         //$Arg4 Thing 5 to activate
+        //$Arg0Type 14
+        //$Arg1Type 14
+        //$Arg2Type 14
+        //$Arg3Type 14
+        //$Arg4Type 14
     }
     
     override void Activate(Actor activator) {    
@@ -109,6 +133,7 @@ Class CrackSpecialEffect : SpecialEffect {
     Default {
         //$Title Crack Special Effect
         //$Arg0 Thing to activate
+        //$Arg0Type 14
         Radius 10;
         Height 32;
         +WALLSPRITE;
@@ -117,6 +142,7 @@ Class CrackSpecialEffect : SpecialEffect {
         +NOBLOOD;
         +DONTTHRUST;
         +NOTAUTOAIMED;
+        +NOGRAVITY;
         health 10;
         DamageFactor "None", 0;
         DamageFactor "Explosion", 1;        
@@ -162,3 +188,77 @@ Class Crack3SpecialEffect : CrackSpecialEffect {
             loop;
         }
 }
+
+
+Class SwitchThing : Actor {
+
+    Default {
+        //$Arg0 Thing to activate when switch is turned on
+        //$Arg1 Thing to activate when switch is turned off
+        //$Arg0Type 14
+        //$Arg1Type 14
+        //$Category Switches
+        Radius 10;
+        Height 32;
+        +WALLSPRITE;
+        +NOGRAVITY;
+        +USESPECIAL;
+        Activation THINGSPEC_Switch;
+    }
+    
+    override void Activate(Actor activator) {
+        
+        if(Special == 0) {
+            ActorIterator iterator = Level.CreateActorIterator(args[0]);
+            Actor thing;
+            while (thing = iterator.Next()) {
+                int sectorTag = Utils.GetSectorTagFromSpecialFromThing(thing);
+                if(Utils.IsSectorBusy(sectorTag)) {
+                    return;
+                }
+            }            
+            Utils.ActivateThings(args[0], self);
+            SetStateLabel("Active");
+        } else {
+            SetStateLabel("Active");
+        }
+        
+    }
+    
+    override void Deactivate(Actor activator) {
+        if(Special == 0) {
+            ActorIterator iterator = Level.CreateActorIterator(args[1]);
+            Actor thing;
+            while (thing = iterator.Next()) {
+                int sectorTag = Utils.GetSectorTagFromSpecialFromThing(thing);
+                if(Utils.IsSectorBusy(sectorTag)) {
+                    return;
+                }
+            }            
+            Utils.ActivateThings(args[1], self);
+            SetStateLabel("Inactive");
+        } else {
+            SetStateLabel("Inactive");
+        }
+    }
+
+}
+
+class Switch01 : SwitchThing {
+
+    Default {
+        //$Title Switch 1        
+     }
+     
+     States {
+        Spawn:
+        Inactive:
+            SW01 A 1;
+            loop;
+        Active:
+            SW01 B 1;
+            loop;     
+     }
+
+}
+

@@ -19,6 +19,8 @@ GameInfo
 	StatusbarClass = "MyHUD"    
     
     AddEventHandlers = "RadiusDebugHandler"
+    AddEventHandlers = "FootstepsInit"
+    AddEventHandlers = "PlayerEventHandler"
     
     SkyFlatName = "STARSKY1"
 }
@@ -88,16 +90,22 @@ Skill nightmare
 //
 //-------------------------------------------------------------------------------------------
 
+DefaultMap {
+    AllowFreelook
+    AllowCrouch
+    AllowJump
+    FallingDamage
+    Sky1 = "textures/sky/STARSKY1.png"
+    LightMode = 3
+}
+
 Map "MAP01" "$TXT_MAP01"
 {
-	LightMode = 3
-	Sky1 = "textures/sky/STARSKY1.png"
+    
 }
 
 Map "TEST" "TEST"
 {
-	LightMode = 3
-	Sky1 = "textures/sky/STARSKY1.png"
 }
 
 
@@ -111,16 +119,24 @@ DoomEdNums
     10003 = SMGWeapon
     10004 = GrenadeLauncher
     10005 = PipebombBox
-    10006 = IronXBow
+    10006 = AutoCBow
     10007 = SawThrower
+    10008 = M60
     
     10010 = PipebombAmmo
     
     12001 = Chair
+    
+    13001 = Switch01
 
     20001 = CockroachSoldier
     20002 = CockroachCaptain
     20003 = VagMouth
+    20004 = Trite
+    20005 = Trypo
+    20006 = Kamikazi
+    20007 = Incubus
+    20008 = MechaManiac
     
     20101 = PedestrianFod1
     20102 = PedestrianFod2
@@ -145,6 +161,18 @@ DoomEdNums
     30004 = Crack2SpecialEffect
     30005 = Crack3SpecialEffect
     30006 = MultiActivationSpecialEffect
+    30007 = ActivationSpecialEffect
     
-    
+}
+
+SpawnNums
+{
+    20001 = CockroachSoldier
+    20002 = CockroachCaptain
+    20003 = VagMouth
+    20004 = Trite
+    20005 = Trypo
+    20006 = Kamikazi
+    20007 = Incubus
+    20008 = MechaManiac
 }

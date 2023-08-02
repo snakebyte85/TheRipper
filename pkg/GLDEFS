@@ -1,40 +1,100 @@
-Object GrenadeLauncherShot
+pulselight Explosion
 {
- Frame MIS6B { Light Explod }
- Frame MIS6C { Light Explod2 }
- Frame MIS6D { Light Explod3 }
- Frame MIS6E { Light Explod3 }
- Frame MIS6F { Light Explod4 }
+    color 1 1 1
+    size 150
+    secondarySize 50
+    interval 5
 }
 
-Object GrenadeLauncherTimedShot
+pointlight HROCKET
 {
- Frame MIS6B { Light Explod }
- Frame MIS6C { Light Explod2 }
- Frame MIS6D { Light Explod3 }
- Frame MIS6E { Light Explod3 }
- Frame MIS6F { Light Explod4 }
+    color 0.4 0.4 0.0
+    size 38
 }
 
-Pointlight Explod
+flickerlight HROCKET_X1
 {
- Color 1.0 1.0 0.0
- Size 90
-}
-Pointlight Explod2
-{
- Color 1.0 1.0 0.0
- Size 110
+    color 0.8 0.8 0.0
+    size 64
+    secondarySize 72
+    chance 0.3
 }
 
-Pointlight Explod3
+flickerlight HROCKET_X2
 {
- Color 1.0 1.0 0.0
- Size 60
+    color 0.5 0.5 0.0
+    size 80
+    secondarySize 88
+    chance 0.3
 }
 
-Pointlight Explod4
+flickerlight HROCKET_X3
 {
- Color 1.0 1.0 0.0
- Size 30
+    color 0.3 0.3 0.0
+    size 96
+    secondarySize 104
+    chance 0.3
 }
+
+flickerlight HROCKET_X4
+{
+    color 0.1 0.1 0.0
+    size 80
+    secondarySize 88
+    chance 0.3
+}
+
+object IncubusHomingRocketShot
+{
+    frame MSLHA { light HROCKET }
+    
+    frame MISLE { light HROCKET_X1 }
+    frame MISLF { light HROCKET_X1 }
+    frame MISLG { light HROCKET_X2 }
+    frame MISLH { light HROCKET_X2 }
+    frame MISLI { light HROCKET_X3 }
+    frame MISLJ { light HROCKET_X3 }
+    frame MISLK { light HROCKET_X4 }
+}
+
+
+pointlight PHOTONSHOT
+{
+    color 0.0 0.0 1.0
+    size 50
+}
+
+
+flickerlight PHOTONSHOT_X1
+{
+    color 0.0 0.0 1.0
+    size 60
+    secondarySize 64
+    chance 0.25
+}
+
+flickerlight PHOTONSHOT_X2
+{
+    color 0.0 0.0 0.4
+    size 76
+    secondarySize 84
+    chance 0.25
+}
+
+flickerlight PHOTONSHOT_X3
+{
+    color 0.0 0.0 0.2
+    size 92
+    secondarySize 100
+    chance 0.25
+}
+
+object IncubusPhotonShot
+{
+    frame INCSA { light PHOTONSHOT }
+    frame INCSB { light PHOTONSHOT }
+
+    frame INCSC { light PHOTONSHOT_X1 }
+    frame INCSD { light PHOTONSHOT_X2 }
+    frame INCSE { light PHOTONSHOT_X3 }
+} 

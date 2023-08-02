@@ -1,0 +1,27 @@
+splash water {
+
+    smallclass CustomWaterSplash
+    smallsound water/splash
+    
+    baseclass CustomWaterSplash
+    sound water/splash
+}
+
+terrain water {
+
+    splash water
+    footclip 10
+    liquid
+    
+    friction 1
+}
+
+
+floor 0WATER01 water
+floor 0WATER02 water
+floor 0WATER03 water
+floor 0WATER04 water
+floor 0WATER05 water
+floor 0WATER06 water
+floor 0WATER07 water
+floor 0WATER08 water

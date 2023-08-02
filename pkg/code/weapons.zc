@@ -1,3 +1,49 @@
+class MyWeapon : Weapon {
+
+    Default {
+        //$Category Weapons
+        +WEAPON.NOAUTOAIM;
+    }
+
+    private int lastQuickKickTime;
+    const QUICK_KICK_DELAY_TICS=35*0.5;
+    const PSP_QUICK_KICK = -100;
+
+    override void DoEffect() {
+        Super.DoEffect();
+        if(!owner || !owner.player) {
+			return;
+        }
+        if (!owner.player.ReadyWeapon || owner.player.ReadyWeapon != self) {
+            return;
+        }
+        if (owner.health < 1) {
+            return;
+        }
+        if (owner.player.cmd.buttons & BT_USER1 && !(owner.player.oldbuttons & BT_USER1) ) {
+            if ( level.time - lastQuickKickTime > QUICK_KICK_DELAY_TICS ) {
+                owner.player.setPSprite(PSP_QUICK_KICK,ResolveState("QuickKick"));
+                lastQuickKickTime = level.time;
+            }
+        }
+     }
+        
+     States {
+        QuickKick:
+            KICK A 5;
+            KICK B 5 {
+                let oldKickback = invoker.kickback;
+                invoker.kickback=5000;
+                invoker.bforcepain=!invoker.bforcepain;
+                A_CustomPunch (5,0,0,"BulletPuff", 64,0,0, "ArmorBonus", "", "");
+                invoker.kickback = oldKickback;
+                invoker.bforcepain=!invoker.bforcepain;
+                }
+            KICK A 5;
+            stop;
+        }
+}
+
 class Machete : MyWeapon
 {
     Default {
@@ -26,7 +72,7 @@ class Machete : MyWeapon
     TNT1 A 0 A_Jump(128,"Fire4");
     TNT1 A 0 A_Jump(128,"Fire3");
     TNT1 A 0 A_Jump(128,"Fire2");
-    MHTG A 2 A_PlayWeaponSound("MacheteSwing");
+    MHTG A 2 A_PlayWeaponSound("weapons/Machete/Swing");
     MHTG B 2;
     MHTG C 4 A_CustomPunch (30,0,0,"MachetePuff");
     MHTG D 2;
@@ -37,7 +83,7 @@ class Machete : MyWeapon
     MHTG I 2;
     goto Ready;
   Fire2:
-    MHT2 A 2 A_PlayWeaponSound("MacheteSwing");
+    MHT2 A 2 A_PlayWeaponSound("weapons/Machete/Swing");
     MHT2 B 2; 
     MHT2 C 4 A_CustomPunch (20,0,0,"MachetePuff");
     MHT2 D 2;
@@ -47,7 +93,7 @@ class Machete : MyWeapon
     MHT2 H 2 ;
     goto Ready;
   Fire3:
-    MHT3 A 2 A_PlayWeaponSound("MacheteSwing");
+    MHT3 A 2 A_PlayWeaponSound("weapons/Machete/Swing");
     MHT3 B 2;
     MHT3 C 4 A_CustomPunch (10,0,0,"MachetePuff");
     MHT3 D 2;
@@ -57,7 +103,7 @@ class Machete : MyWeapon
     TNT1 A 0 A_ReFire;
     goto Ready;
   Fire4:
-    MHT4 A 2 A_PlayWeaponSound("MacheteSwing");
+    MHT4 A 2 A_PlayWeaponSound("weapons/Machete/Swing");
     MHT4 B 2;
     MHT4 C 4 A_CustomPunch (10,0,0,"MachetePuff");
     MHT4 D 2;
@@ -78,9 +124,8 @@ class MachetePuff : Actor
       +PUFFONACTORS;
       RenderStyle "Translucent";
       Alpha 0.6;
-      SeeSound "MacheteHitThing";
-      AttackSound "MacheteHitWall";
-      ActiveSound "MacheteSwing";
+      SeeSound "weapons/Machete/HitThing";
+      AttackSound "weapons/Machete/HitWall";
       VSpeed 1;
       }
   States
@@ -142,7 +187,7 @@ class PlasmaBolterShot : MyWeapon
        Scale 0.75;
        PROJECTILE;
        DamageType "Lightning";
-       SeeSound "weapons/boltfire";
+       SeeSound "weapons/plasmabolter/fire";
        //DeathSound "effets/plasma/hit";
        Decal "PlasmaScorchLower";
        RenderStyle "Add";
@@ -215,9 +260,9 @@ class Bearkiller : MyWeapon
     Loop;
   Fire:
     KFDB A 3;
-    KFDB B 0 A_PlayWeaponSound ("KFFIRE");
+    KFDB B 0 A_PlayWeaponSound ("weapons/bearkiller/fire");
     KFDB B 0 A_FireBullets (11.2, 7.1, 10, 6, "BulletPuff");
-    KFDB B 3 A_GunFlash; 
+    KFDB B 3; 
     KFDB C 5;
     KFDB C 0 A_CheckReload();
     KFDB C 0 {
@@ -230,15 +275,15 @@ class Bearkiller : MyWeapon
     }
   Reload:
     KFDB E 6;
-    KFDB E 3 A_Playsound ("KFOPN");
+    KFDB E 3 A_Playsound ("weapons/bearkiller/open");
     KFDB SF 3;
-    KFDB GF 3 A_SpawnItemEx("ShotgunBulletCasing", 0, 0, 30, 0, frandom(-2,-1), frandom(5,6), 180);
+    KFDB GF 3 A_SpawnItemEx("ShotgunBulletCasing", 0, -5, 30, 0, frandom(-2,-1), frandom(5,6), 180);
     KFDB S 1;
     KFDB H 7;
     KFDB IMJNOPK 3;
     KFDB L 2;
     KFDB E 7;
-    KFDB D 7 A_Playsound ("KFCLS");
+    KFDB D 7 A_Playsound ("weapons/bearkiller/close");
     KFDB A 5;
     KFDB A 0 {
         invoker.currentShots=0;
@@ -246,19 +291,16 @@ class Bearkiller : MyWeapon
     Goto Ready;
    AltFire:   
     KFDB A 3;
-    KFDB B 0 A_PlayWeaponSound ("KFFIRE");
+    KFDB B 0 {
+        A_PlayWeaponSound ("weapons/bearkiller/fire");
+        A_PlayWeaponSound ("weapons/bearkiller/fire");
+    }
     KFDB B 0 A_FireBullets (11.2, 7.1, 20, 6, "BulletPuff");
     KFDB B 0 A_FireBullets (0, 0, 0, 0);
-    KFDB B 3 A_GunFlash; 
+    KFDB B 3;
     KFDB C 14;
     KFDB D 5 A_CheckReload;
     Goto Reload;
-   Flash:
-    KFDM B 3 Bright A_Light1;
-    Goto LightDone;
-   AltFlash:
-    KFDM D 3 Bright A_Light2;
-    Goto LightDone;
   }
 }
 
@@ -324,7 +366,7 @@ class SMG : MyWeapon {
        Weapon.AmmoGive 10;
        Weapon.AmmoUse 1;
        Weapon.Kickback 150;
-       AttackSound "SMGFIRE";
+       AttackSound "weapons/smg/fire";
        }
    States {
     Spawn:
@@ -415,6 +457,72 @@ class SMGWeapon : CustomInventory
    }
 }
 
+Class M60 : MyWeapon {
+
+    Default {
+        Decal "BulletChip";
+        Weapon.SelectionOrder 500;
+        Weapon.SlotNumber 4;
+        inventory.pickupsound "misc/w_pkup";
+        Inventory.PickupMessage "You found a M60";
+        Weapon.AmmoType "clip";
+        Weapon.AmmoGive 10;
+        Weapon.AmmoUse 1;
+        Weapon.Kickback 100;
+        attacksound "weapons/m60/fire";
+        scale 0.5;
+    }
+    States {
+        Spawn:
+            MC60 A 1;
+            Loop;
+         Select:
+           MG60 A 1 A_RAISE;
+           Loop;
+         Deselect:
+            MG60 A 1 A_Lower;
+            loop;
+         Ready:
+            MG60 A 1 A_WeaponReady;
+            loop;
+         Fire:
+            TNT1 A 0 A_Overlay(-2, "Flash");
+            MG60 B 1 BRIGHT A_FireBullets(1,1,1,10,"BulletPuff",1);
+            //MG60 CD 1;
+            TNT1 A 0 A_PlaySound("weapons/m60/reload");
+            MG60 EF 1;
+            goto ready;
+         Flash:
+            TNT1 A 0 A_Jump(150,"flash1");
+            TNT1 A 0 A_Jump(150,"flash2");
+            TNT1 A 0 A_Jump(150,"flash3");
+            TNT1 A 0 A_Jump(150,"flash4");
+            TNT1 A 0 A_Jump(150,"flash5");
+            loop;
+          Flash1:
+            RICO AB 1 bright;
+ //           TNT1 A 3;
+            stop;
+          Flash2:
+            RICO CD 1 bright;
+ //           TNT1 A 3;
+            stop;
+          Flash3:
+            RICO EF 1 bright;
+ //           TNT1 A 3;
+            stop;
+          Flash4:
+            RICO GH 1 bright;
+  //          TNT1 A 3;
+            stop;
+          Flash5:
+            RICO IJ 1 bright;
+  //          TNT1 A 3;
+            stop;
+   }
+}
+
+
 class GrenadeLauncher : MyWeapon
 {
     Default {
@@ -443,7 +551,7 @@ class GrenadeLauncher : MyWeapon
 	Fire:
 		RGLF A 3;
 		RGLF A 0 A_GunFlash; 
-		RGLF A 0 A_PlayWeaponSound ("40mm/grenfire");
+		RGLF A 0 A_PlayWeaponSound ("weapons/grenade/fire");
 		RGLF B 3;
 		RGLF B 0 A_FireCustomMissile ("GrenadeLauncherShot", 0, 1, 1, 10, 1);
 		RGLG ABC 3;
@@ -453,7 +561,7 @@ class GrenadeLauncher : MyWeapon
 	AltFire:
 		RGLF A 3;
 		RGLF A 0 A_GunFlash;
-		RGLF A 0 A_PlayWeaponSound ("40mm/grenfire");
+		RGLF A 0 A_PlayWeaponSound ("weapons/grenade/grenfire");
 		RGLF B 3;
 		RGLF B 0 A_FireCustomMissile ("GrenadeLauncherTimedShot", 0, 1, 1, 10, 1);
 		RGLG ABC 3;
@@ -479,8 +587,7 @@ class GrenadeLauncherShot : Actor
         DamageType "Explosion";
         Speed 50;
         Scale 0.75;
-        SeeSound "40mm/grenbounce";
-        DeathSound "40mm/grenexplode";
+        SeeSound "weapons/grenade/bounce";
         Projectile;
         -NOGRAVITY;
         }
@@ -512,7 +619,7 @@ class GrenadeLauncherTimedShot : GrenadeLauncherShot
         BounceType "Doom";
         +BOUNCEONACTORS;
         +CANBOUNCEWATER;
-        BounceSound "40mm/grenbounce";
+        BounceSound "weapons/grenade/bounce";
         }
 }
 
@@ -584,7 +691,7 @@ class PipebombWeapon : MyWeapon
        Weapon.AmmoGive 5;
        Weapon.AmmoUse 1;
        Weapon.Kickback 0;
-       AttackSound "weapons/pbarm";
+       AttackSound "weapons/pipe/arm";
        Weapon.SelectionOrder 2600;
        Weapon.SlotNumber 6;
        Scale 0.1;
@@ -670,7 +777,7 @@ class PipebombWeapon : MyWeapon
                 invoker.pipebombs.push(PipebombProjectile(p2));
             }
       }
-      PIPE Q 8 A_PlayWeaponSound("weapons/pbthrow");
+      PIPE Q 8 A_PlayWeaponSound("weapons/pipe/throw");
       PIPE RSTU 1;
       TNT1 A 8;
       TNT1 A 0 { 
@@ -693,7 +800,7 @@ class PipebombWeapon : MyWeapon
       DETO B 2;
       DETO B 0 {
         A_AlertMonsters();
-        A_PlayWeaponSound("weapons/pbarm");
+        A_PlayWeaponSound("weapons/pipe/arm");
         for (int i = 0; i < invoker.pipebombs.Size(); i++)  {
             if (invoker.pipebombs[i]) {
                 invoker.pipebombs[i].SetStateLabel("Explosion");
@@ -728,9 +835,9 @@ class PipebombProjectile : Actor
         +SPECIAL;
         +BOUNCEONACTORS;
         Damage 1;
-        SeeSound "weapons/pbbounce";
-        BounceSound "weapons/pbbounce";
-        DeathSound "weapons/pbbounce";
+        SeeSound "weapons/pipe/bounce";
+        BounceSound "weapons/pipe/bounce";
+        DeathSound "weapons/pipe/bounce";
         }
         
     States
@@ -794,106 +901,206 @@ class PipebombBox : CustomInventory
   }
 }
 
-
-class IronBoltAmmo : Ammo
+Class AutoCBow : Weapon
 {
-    Default{ 
-      //$Category Weapons
-      Inventory.PickupMessage "Iron Bolts";
-      Inventory.Amount 8;
-      Inventory.MaxAmount 50;
-      Ammo.BackpackAmount 6;
-      Ammo.BackpackMaxAmount 100;
-      Inventory.Icon "AMM1BOLT";
-      }
-  States
-  {
-  Spawn:
-    AMM1 A -1;
-    Stop;
-  }
+	Default
+	{
+		//$Category Weapons
+		Weapon.SelectionOrder 700;
+		Weapon.SlotNumber 7;
+		Weapon.AmmoUse 1;
+		Weapon.AmmoGive 10;
+		Weapon.AmmoType1 "DartAmmo";
+		+WEAPON.NOALERT
+		Inventory.PickupMessage "You got the automatic crossbow";
+		Inventory.PickupSound "weapons/acrossbow/equip";
+		Tag "Automatic Crossbow";
+	}
+    
+    const MAX_SHOTS_PER_RELOAD=4;
+    
+    private bool zoomed;
+    private int shots;
+    
+    override void DoEffect() {
+        Super.DoEffect();        
+        if(!owner || !owner.player) {
+			return;
+        }
+        if (!owner.player.ReadyWeapon || owner.player.ReadyWeapon != self)
+            return;        
+        
+        if(owner.health<1) {
+            return;
+        }
+        
+        if(owner.player.cmd.buttons & BT_ALTATTACK && !(owner.player.oldbuttons & BT_ALTATTACK) ) {
+            zoomed=!zoomed;                
+        }        
+    }
+    
+	States
+	{
+	Ready:
+		CBWA A 1 {
+            if(invoker.zoomed) {
+                A_ZoomFactor(2.0);
+            } else {
+                A_ZoomFactor(1.0);
+            }
+            A_WeaponReady();
+        }
+		Loop;
+	Deselect:
+		CBWA A 1 {
+            A_ZoomFactor(1.0);
+            A_Lower();
+            }
+		Loop;
+	Select:
+		CBWA A 1 {
+            invoker.shots=0;
+            A_Raise();
+            invoker.zoomed=false;
+            }
+		Loop;
+	Fire:
+		CBWA AB 2;
+		TNT1 A 0 A_StartSound("weapons/acrossbow/fire", CHAN_WEAPON);
+		CBWA C 6 A_FireProjectile("DartProj", 0, 1, 0, 8);
+		CBWA D 6;
+        CBWA D 0 A_CheckReload();
+        TNT1 A 0 {
+            invoker.shots++;
+            if(invoker.shots >= invoker.MAX_SHOTS_PER_RELOAD) {
+                return ResolveState("Reload");
+            } 
+            return ResolveState(null);
+        }
+		CBWA AE 2;
+		TNT1 A 0 A_StartSound("weapons/acrossbow/load", CHAN_WEAPON);
+		CBWA AE 3;
+		CBWA AAEE 2;
+        CBWA A 6;
+		Goto Ready;
+	Reload:
+		CBWA FGHI 3;
+		CBWA J 6;
+		CBWA K 6 A_StartSound("weapons/acrossbow/detach", CHAN_WEAPON);
+		CBWA LMNOP 3;
+		CBWA Q 6 A_StartSound("weapons/acrossbow/attach", CHAN_WEAPON);
+		CBWA RSTU 3;
+		TNT1 A 0 A_StartSound("weapons/acrossbow/load", CHAN_WEAPON);
+		CBWA AEAEAE 2;
+        TNT1 A 0 {
+            invoker.shots=0;
+        }
+		Goto Ready;
+	Spawn:
+		ACBW A -1;
+		Stop;
+	}
 }
 
-class IronBoltQuiverAmmo : IronBoltAmmo
+Class DartProj : FastProjectile
 {
-    Default {
-      Inventory.PickupMessage "Quiver of Bolts";
-      Inventory.Amount 15;
-      }
-  
-  States
-  {
-  Spawn:
-    AMM1 B -1;
-    Stop;
-  }
+	Default
+	{
+		Radius 2;
+		Height 2;
+		Scale 0.6;
+		DamageFunction random(1,3)*6;
+		Speed 96;
+		Gravity 0.1;
+		Projectile;
+		+BLOODSPLATTER
+		+HITTRACER
+		-NOGRAVITY
+		DeathSound "weapons/acrossbow/impact";
+		Obituary "%k rained a shower of darts on %o";
+	}
+	States
+	{
+	Spawn:
+		IDRT A 1;
+		Loop;
+	Death:
+		TNT1 A 0 A_CheckFloor("DeathFloor");
+		TNT1 A 1 A_SpawnItemEx("StuckDart", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERPOINTERS);
+		Stop;
+    XDeath:
+        TNT1 A -1;
+		Stop;
+	DeathFloor:
+		TNT1 A 1 A_SpawnItemEx("GravityStuckDart", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERPOINTERS);
+		Stop;
+	}
+}
+	
+Class DartAmmo : Ammo
+{
+	Default
+	{
+		//$Category Ammunition
+		Inventory.Amount 5;
+		Inventory.MaxAmount 25;
+		Inventory.Icon "DRT0A0";
+		Inventory.PickupMessage "You picked up some darts";
+		Scale 0.6;
+		Tag "Darts";
+	}
+	States
+	{
+	Spawn:
+		DRTA A -1;
+		Stop;
+	}
 }
 
-class IronXBow : MyWeapon
-{
-    Default {
-      Weapon.SelectionOrder 1800;
-      Weapon.SlotNumber 7;
-      Weapon.AmmoUse 1;
-      Weapon.AmmoGive 16;
-      Weapon.AmmoType "IronBoltAmmo";
-      Weapon.YAdjust 15;
-      Inventory.PickupMessage "Iron Crossbow";
-      +WEAPON.NOALERT;
-      Obituary "%o was punctured by %k's Crossbow";
-      }
-  
-  States
-  {
-  Spawn:
-    XBOW Z -1;
-    Stop;
-  Ready:
-    XBOW A 1 A_WeaponReady;
-    Loop;
-  Deselect:
-    XBOW A 1 A_Lower;
-    Loop;
-  Select:
-    XBOW A 1 A_Raise;
-    Loop;
-  Fire:
-    XBOW B 1 A_PlaySound("BowString");
-    XBOW B 5 A_FireCustomMissile ("Ironbolt", 0);
-    XBOW CDEFG 4;
-    XBOW A 5 A_ReFire;
-    goto Ready;
-  }
-}
 
-class Ironbolt : FastProjectile
+Class StuckDart : DartAmmo
 {
-    Default {
-      height 1;
-      radius 1;
-      DamageFunction Random(4,13)*9;
-      speed 36;
-      seesound "misc/shot";
-      deathsound "misc/shotx";
-      PROJECTILE;
-      -ACTIVATEIMPACT; 
-      -ACTIVATEPCROSS;
-      +THRUGHOST;
-      +DONTREFLECT;
-      +NOEXTREMEDEATH;
-      scale 0.5;
-      }
-  
-  states
-  {
-  Spawn:
-    XBLT A -1;
-  Death:
-    XBLT A 160;
-  XDeath:
-    XBLT A 4;
-    stop;
-  }
+	Default
+	{
+		Inventory.Amount 1;
+		Scale 0.5;
+		+NOGRAVITY
+		+INTERPOLATEANGLES 
+		ReactionTime 60;
+	}
+	States
+	{
+	Spawn:
+		TNT1 A 0 NoDelay {
+			if(!CheckLOF(CLOFF_NOAIM|CLOFF_JUMPENEMY|CLOFF_JUMPFRIEND|CLOFF_JUMPOBJECT|CLOFF_JUMPNONHOSTILE|CLOFF_JUMP_ON_MISS|CLOFF_ALLOWNULL, 8, 0, 0, 0, 0, 0, AAPTR_NULL))
+				return ResolveState("Fall");
+			return ResolveState(null);
+		}
+		IDRT A 35 A_CheckRange(1024, "Death", 0);
+		TNT1 A 0 A_Countdown;
+		Loop;
+	Fall:
+		TNT1 A 1 A_SpawnItemEx("GravityStuckDart", 0, 0, 0, 0, 0, 0, 0, SXF_NOCHECKPOSITION | SXF_TRANSFERPOINTERS);
+	Death:
+		TNT1 A 1;
+		Stop;
+	}
+}
+Class GravityStuckDart : StuckDart
+{
+	Default
+	{
+		-NOGRAVITY
+		+FLOORCLIP
+		Gravity 0.5;
+	}
+	States
+	{
+	Spawn:
+		IDRT B 35 A_CheckRange(1024, "Death", 0);
+		TNT1 A 0 A_Countdown;
+		Loop;
+	}
 }
 
 class SawThrower : MyWeapon

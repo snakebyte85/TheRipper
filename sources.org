@@ -1,0 +1,70 @@
+* Ripped games
+** Duke Nukem 3D
+- Textures
+- Sprites
+
+** Cyclones
+- algrd
+
+** Mortal Kombat 2
+- Blood
+
+** Exhumed/Powerslave
+- Terrainian
+- effects
+- Piranha
+
+** Marathon
+- Flickta
+
+** Hackx
+- Mecha Maniac
+- Flying eye
+
+** Mars3d
+- Textures
+
+* Sources
+ 
+** Otex
+Textures
+https://doom.ukiro.com/otex-downloads/
+
+** Box o skies
+https://www.doomworld.com/forum/topic/92795-meks-box-o-skies-v3-look-up-in-the-sky-more-skies/
+
+** Civilians
+https://forum.zdoom.org/viewtopic.php?t=72748
+
+** Realm667
+- Machete
+- Pipebomb
+- Plasma gun
+- Bearkiller
+- Saw
+- SMG
+- Iron xbow
+- Grenade Launcher
+- Shadow Hunter
+- Laser Shark
+- Beheaded Kamikaze
+- Chair
+- Incubus
+
+
+** Custom sounds
+https://forum.zdoom.org/viewtopic.php?f=37&t=50207
+
+** NashDecals
+https://forum.zdoom.org/viewtopic.php?f=46&t=69770
+
+** RadiusDebug
+https://forum.zdoom.org/viewtopic.php?t=60804
+
+** OpenGameArt
+- Water splashes
+** Foosteps (zscript port)
+https://forum.zdoom.org/viewtopic.php?t=65173&hilit=footsteps
+
+** Inifile
+https://github.com/argv-minus-one/gzdoom-zscript-utils/tree/master/INIFile
