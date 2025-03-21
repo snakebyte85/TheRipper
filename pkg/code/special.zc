@@ -19,6 +19,8 @@ Class DestructibleWallSpecialEffect : SpecialEffect {
     }
 
     private double oldFloorHeightDiff;
+	private double moveDest1;
+	private double moveDest2;
 
     override void PostBeginPlay() {
             
@@ -30,20 +32,23 @@ Class DestructibleWallSpecialEffect : SpecialEffect {
         
         double slopeOffset = 0;
         if (floorPlane.isSlope() || ceilingPlane.isSlope()) {
-            slopeOffset = 500;
+            slopeOffset = 1000;
         }   
         
         oldFloorHeightDiff = (heightCeiling - heightFloor) + slopeOffset;
-        floorPlane.ChangeHeight(oldFloorHeightDiff);
-               
+		moveDest1 = floorPlane.PointToDist(CurSector.CenterSpot, heightCeiling);
+		moveDest2 = floorPlane.PointToDist(CurSector.CenterSpot, heightFloor);
+		
+        //floorPlane.ChangeHeight(oldFloorHeightDiff);
+        CurSector.MoveFloor(oldFloorHeightDiff, moveDest1, 10000, 1, false, true);
         
     }
     
     override void Activate(Actor activator) {
     
-        SecPlane floorPlane = CurSector.floorplane;
-        
-        floorPlane.ChangeHeight(-oldFloorHeightDiff);
+        //SecPlane floorPlane = CurSector.floorplane;
+        CurSector.MoveFloor(oldFloorHeightDiff, moveDest2, 10000, -1, false, true);
+        //floorPlane.ChangeHeight(-oldFloorHeightDiff);
     }
 }
 

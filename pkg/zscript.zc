@@ -2,7 +2,7 @@ version "3.3.2"
 
 #include "code/base.zc"
 
-#include "code/Player.zc"
+#include "code/player.zc"
 #include "code/civilians.zc"
 #include "code/hud.zc"
 #include "code/weapons.zc"
